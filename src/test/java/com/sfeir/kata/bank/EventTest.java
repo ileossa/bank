@@ -49,13 +49,22 @@ public class EventTest {
     }
 
     @Test
-    public void should_calculate_balance(){
+    public void should_calculate_balance_with_deposti(){
         baseEvents.put(uuid, new Event.History(uuid, DEPOSIT, 100, localDateTime));
-//        baseEvents.put(uuid, new Event.History(uuid, WITHDRAWAL, 20, localDateTime));
 
         int balanceCalculated = event.calculate(baseEvents);
 
         Assertions.assertEquals(100, balanceCalculated);
+    }
+
+    @Test
+    public void should_calculate_balance_with_deposit_and_withdrawal(){
+        baseEvents.put(uuid, new Event.History(uuid, DEPOSIT, 100, localDateTime));
+        baseEvents.put(uuid, new Event.History(uuid, WITHDRAWAL, 20, localDateTime));
+
+        int balanceCalculated = event.calculate(baseEvents);
+
+        Assertions.assertEquals(80, balanceCalculated);
     }
 
 

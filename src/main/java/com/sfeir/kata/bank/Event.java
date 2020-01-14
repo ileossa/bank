@@ -21,12 +21,6 @@ public class Event {
      * @return
      */
     protected int calculate(Map<UUID, History> eventsList){
-//        eventsList.values((uuid, history) -> {
-//            if(history.order.equals(Order.DEPOSIT))
-//                history.balance += history.amount;
-//            else
-//                history.balance -= history.amount;
-//        }).;
         return eventsList
                 .values()
                 .stream()
