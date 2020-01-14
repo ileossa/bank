@@ -16,12 +16,8 @@ public class Event {
     }
 
 
-    public Map<UUID, Toto> getEventsList() {
+    public Map<UUID, Toto> retrieveEvents() {
         return eventsList;
-    }
-
-    public void setEventsList(){
-
     }
 
     static class Toto{

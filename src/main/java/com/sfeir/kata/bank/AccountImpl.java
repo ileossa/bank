@@ -29,8 +29,7 @@ public class AccountImpl implements Account {
 
     @Override
     public void printStatement() {
-        System.out.println("call print");
-        Map<UUID, Event.Toto> eventsList = event.getEventsList();
+        Map<UUID, Event.Toto> eventsList = event.retrieveEvents();
         eventsList.forEach((uuid, event)-> System.out.println(uuid +" -> "+event.toString()));
     }
 

@@ -51,9 +51,9 @@ public class AccountImplTest {
         Map<UUID, Event.Toto> fakeEventsList = new ConcurrentHashMap<>();
         fakeEventsList.put(uuidUser, toto);
 
-        Mockito.when(event.getEventsList()).thenReturn(fakeEventsList);
+        Mockito.when(event.retrieveEvents()).thenReturn(fakeEventsList);
         account.printStatement();
-        verify(event, times(1)).getEventsList();
+        verify(event, times(1)).retrieveEvents();
     }
 
 }
