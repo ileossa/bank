@@ -47,13 +47,15 @@ public class AccountImplTest {
 
     @Test
     public void should_printStatement(){
-        Event.Toto toto = new Event.Toto(uuidUser, DEPOSIT, 20, account.getLocalDateTime());
-        Map<UUID, Event.Toto> fakeEventsList = new ConcurrentHashMap<>();
-        fakeEventsList.put(uuidUser, toto);
+        Event.History history = new Event.History(uuidUser, DEPOSIT, 20, account.getLocalDateTime());
+        Map<UUID, Event.History> fakeEventsList = new ConcurrentHashMap<>();
+        fakeEventsList.put(uuidUser, history);
 
         Mockito.when(event.retrieveEvents()).thenReturn(fakeEventsList);
         account.printStatement();
         verify(event, times(1)).retrieveEvents();
     }
+
+
 
 }

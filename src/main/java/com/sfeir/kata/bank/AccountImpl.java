@@ -29,7 +29,7 @@ public class AccountImpl implements Account {
 
     @Override
     public void printStatement() {
-        Map<UUID, Event.Toto> eventsList = event.retrieveEvents();
+        Map<UUID, Event.History> eventsList = event.retrieveEvents();
         eventsList.forEach((uuid, event)-> System.out.println(uuid +" -> "+event.toString()));
     }
 
