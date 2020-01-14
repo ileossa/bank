@@ -7,30 +7,49 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Event {
 
-    private Map<UUID, Toto> eventsList = new ConcurrentHashMap<>();
+    private Map<UUID, History> eventsList = new ConcurrentHashMap<>();
 
-    public void publish(UUID uuid, Order order, int amount, LocalDateTime s){
+    public void publish(UUID uuid, Order order, int amount, LocalDateTime dateTime){
         System.out.println("call publish");
-        Toto toto = new Toto(uuid, order, amount, s);
-        eventsList.put(uuid, toto);
+        History history = new History(uuid, order, amount, dateTime);
+        eventsList.put(uuid, history);
+    }
+
+    /**
+     * Calculate balance when publish operation
+     * @param eventsList
+     * @return
+     */
+    private int calculate(Map<UUID, History> eventsList){
+        return 1;
     }
 
 
-    public Map<UUID, Toto> retrieveEvents() {
+    public Map<UUID, History> retrieveEvents() {
         return eventsList;
     }
 
-    static class Toto{
+    static class History {
         private UUID uuid;
         private Order order;
         private Integer amount;
         private LocalDateTime localDateTime;
+        private Integer balance;
 
-        public Toto(UUID uuid, Order order, Integer amount, LocalDateTime localDateTime) {
+        public History(UUID uuid, Order order, Integer amount, LocalDateTime localDateTime, Integer balance) {
             this.uuid = uuid;
             this.order = order;
             this.amount = amount;
             this.localDateTime = localDateTime;
+            this.balance = balance;
+        }
+
+        public History(UUID uuid, Order order, Integer amount, LocalDateTime localDateTime) {
+            this.uuid = uuid;
+            this.order = order;
+            this.amount = amount;
+            this.localDateTime = localDateTime;
+            this.balance = 0;
         }
 
         @Override
@@ -40,6 +59,7 @@ public class Event {
                     ", order=" + order +
                     ", amount=" + amount +
                     ", localDateTime=" + localDateTime +
+                    ", balance=" + balance +
                     '}';
         }
     }
