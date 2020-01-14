@@ -20,8 +20,8 @@ public class Event {
      * @param eventsList
      * @return
      */
-    private int calculate(Map<UUID, History> eventsList){
-        return 1;
+    protected int calculate(Map<UUID, History> eventsList){
+        return 0;
     }
 
 
