@@ -1,29 +1,39 @@
 package com.sfeir.kata.bank;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.sfeir.kata.bank.Order.WITHDRAWAL;
 
 public class Event {
 
-    private Map<UUID, History> eventsList = new ConcurrentHashMap<>();
+    private Map<UUID, List<History>> eventsList = new ConcurrentHashMap<>();
 
     public void publish(UUID uuid, Order order, int amount, LocalDateTime dateTime){
-        System.out.println("call publish");
-        History history = new History(uuid, order, amount, dateTime);
-        eventsList.put(uuid, history);
+        History history;
+        if(eventsList.isEmpty())
+            if(WITHDRAWAL.equals(order))
+                history = new History(uuid, order, amount, dateTime, -1*amount);
+            else
+                history = new History(uuid, order, amount, dateTime, amount);
+        else
+            history = new History(uuid, order, amount, dateTime, calculate(eventsList));
+        eventsList.computeIfAbsent(uuid, k-> new ArrayList<>()).add(history);
     }
 
     /**
      * Calculate balance when publish operation
      * @param eventsList
-     * @return
+     * @return balance calculated
      */
-    protected int calculate(Map<UUID, History> eventsList){
-        return eventsList
-                .values()
+    protected int calculate(Map<UUID, List<History>> eventsList){
+        System.out.println(eventsList.toString());
+
+        return eventsList.values()
                 .stream()
+                .flatMap(Collection::stream)
+                .peek(System.out::println)
                 .map(historyEvent -> {
                     if(historyEvent.order.equals(Order.DEPOSIT))
                         historyEvent.balance += historyEvent.amount;
@@ -31,11 +41,14 @@ public class Event {
                         historyEvent.balance -= historyEvent.amount;
                     return historyEvent.balance;
                 })
-                .reduce(0, (x,y) -> x+y);
+                .peek(System.out::println)
+                .reduce((x, y)-> x + y)
+                .get();
     }
 
 
-    public Map<UUID, History> retrieveEvents() {
+    public Map<UUID, List<History>> retrieveEvents() {
+        System.out.println(eventsList.toString());
         return eventsList;
     }
 
@@ -64,7 +77,7 @@ public class Event {
 
         @Override
         public String toString() {
-            return "Toto{" +
+            return "History{" +
                     "uuid=" + uuid +
                     ", order=" + order +
                     ", amount=" + amount +

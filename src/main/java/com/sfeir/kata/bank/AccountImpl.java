@@ -1,6 +1,9 @@
 package com.sfeir.kata.bank;
 
+import com.sfeir.kata.bank.Event.History;
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,7 +32,7 @@ public class AccountImpl implements Account {
 
     @Override
     public void printStatement() {
-        Map<UUID, Event.History> eventsList = event.retrieveEvents();
+        Map<UUID, List<History>> eventsList = event.retrieveEvents();
         eventsList.forEach((uuid, event)-> System.out.println(uuid +" -> "+event.toString()));
     }
 

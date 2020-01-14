@@ -1,5 +1,6 @@
 package com.sfeir.kata.bank;
 
+import com.sfeir.kata.bank.Event.History;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -8,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +23,7 @@ public class EventTest {
 
     @InjectMocks
     private Event event;
-    private Map<UUID, Event.History> baseEvents;
+    private Map<UUID, List<History>> baseEvents = new ConcurrentHashMap<>();
     private static final UUID uuid = UUID.randomUUID();
     private LocalDateTime localDateTime ;
 
@@ -32,7 +35,8 @@ public class EventTest {
 
     @Test
     public void should_publish_deposit_message(){
-        baseEvents.put(uuid, new Event.History(uuid, DEPOSIT, 10, localDateTime));
+        History deposit = new History(uuid, DEPOSIT, 10, localDateTime, 10);
+        baseEvents.computeIfAbsent(uuid, k-> new ArrayList<>()).add(deposit);
 
         event.publish(uuid, DEPOSIT, 10, localDateTime);
 
@@ -41,7 +45,8 @@ public class EventTest {
 
     @Test
     public void should_publish_withdrawal_message(){
-        baseEvents.put(uuid, new Event.History(uuid, WITHDRAWAL, 20, localDateTime));
+        History withdrawal = new History(uuid, WITHDRAWAL, 20, localDateTime, -20);
+        baseEvents.computeIfAbsent(uuid, k-> new ArrayList<>()).add(withdrawal);
 
         event.publish(uuid, WITHDRAWAL, 20, localDateTime);
 
@@ -50,7 +55,8 @@ public class EventTest {
 
     @Test
     public void should_calculate_balance_with_deposti(){
-        baseEvents.put(uuid, new Event.History(uuid, DEPOSIT, 100, localDateTime));
+        History deposit = new History(uuid, DEPOSIT, 100, localDateTime);
+        baseEvents.computeIfAbsent(uuid, k-> new ArrayList<>()).add(deposit);
 
         int balanceCalculated = event.calculate(baseEvents);
 
@@ -59,8 +65,12 @@ public class EventTest {
 
     @Test
     public void should_calculate_balance_with_deposit_and_withdrawal(){
-        baseEvents.put(uuid, new Event.History(uuid, DEPOSIT, 100, localDateTime));
-        baseEvents.put(uuid, new Event.History(uuid, WITHDRAWAL, 20, localDateTime));
+        History deposit = new History(uuid, DEPOSIT, 100, localDateTime);
+        baseEvents.computeIfAbsent(uuid, k-> new ArrayList<>())
+                .add(deposit);
+        History withdrawal = new History(uuid, WITHDRAWAL, 20, localDateTime);
+        baseEvents.computeIfAbsent(uuid, k-> new ArrayList<>())
+                .add(withdrawal);
 
         int balanceCalculated = event.calculate(baseEvents);
 
