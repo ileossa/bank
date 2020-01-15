@@ -1,7 +1,6 @@
 package com.sfeir.kata.bank;
 
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,21 +26,13 @@ public class AccountImplTest {
     @Mock Event event;
 
     private UUID uuidUser = UUID.randomUUID();
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
 
     @Before
     public void setUp(){
-        System.setOut(new PrintStream(outContent));
         account = new AccountFactoryHelper(uuidUser);
         // need to set event Object to verify call method
         account.setEvent(event);
 
-    }
-
-    @After
-    public void restoreConfiguration(){
-        System.setOut(originalOut);
     }
 
     @Test
@@ -61,7 +50,7 @@ public class AccountImplTest {
 
     @Test
     public void should_printStatement(){
-        Event.History history = new Event.History(uuidUser, DEPOSIT, 20, account.getLocalDateTime());
+        Event.History history = new Event.History(uuidUser, DEPOSIT, 20, account.getLocalDateTime(), 20);
         Map<UUID, List<Event.History>> fakeEventsList = new ConcurrentHashMap<>();
         fakeEventsList.computeIfAbsent(uuidUser, k->new ArrayList<>()).add(history);
 
