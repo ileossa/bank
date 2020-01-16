@@ -2,7 +2,6 @@
 Feature: Features for account service
 
   Scenario: In order to save money
-    Given I have 0 money
     When I want to make a deposit 10 in my bank
     Then I have 10 money in my bank
 

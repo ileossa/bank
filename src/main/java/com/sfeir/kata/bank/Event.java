@@ -10,7 +10,7 @@ public class Event {
 
     private Map<UUID, List<History>> eventsList = new ConcurrentHashMap<>();
 
-    public void publish(UUID uuid, Order order, int amount, LocalDateTime dateTime){
+    public Map<UUID, List<History>> publish(UUID uuid, Order order, int amount, LocalDateTime dateTime){
         History history;
         if(eventsList.isEmpty())
             if(WITHDRAWAL.equals(order))
@@ -20,6 +20,13 @@ public class Event {
         else
             history = new History(uuid, order, amount, dateTime, calculate(eventsList));
         eventsList.computeIfAbsent(uuid, k-> new ArrayList<>()).add(history);
+        return eventsList;
+    }
+
+    public Map<UUID, List<History>> publish(Map<UUID, List<History>> events, UUID uuid, Order order, int amount, LocalDateTime dateTime){
+        this.eventsList = events;
+        this.publish(uuid, order, amount, dateTime);
+        return eventsList;
     }
 
     /**
@@ -28,12 +35,10 @@ public class Event {
      * @return balance calculated
      */
     protected int calculate(Map<UUID, List<History>> eventsList){
-        System.out.println(eventsList.toString());
 
         return eventsList.values()
                 .stream()
                 .flatMap(Collection::stream)
-                .peek(System.out::println)
                 .map(historyEvent -> {
                     if(historyEvent.order.equals(Order.DEPOSIT))
                         historyEvent.balance += historyEvent.amount;
@@ -41,14 +46,12 @@ public class Event {
                         historyEvent.balance -= historyEvent.amount;
                     return historyEvent.balance;
                 })
-                .peek(System.out::println)
                 .reduce((x, y)-> x + y)
                 .get();
     }
 
 
     public Map<UUID, List<History>> retrieveEvents() {
-        System.out.println(eventsList.toString());
         return eventsList;
     }
 
@@ -84,6 +87,10 @@ public class Event {
                     ", localDateTime=" + localDateTime +
                     ", balance=" + balance +
                     '}';
+        }
+
+        public LocalDateTime getLocalDateTime() {
+            return localDateTime;
         }
     }
 }

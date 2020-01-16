@@ -13,7 +13,8 @@ import static com.sfeir.kata.bank.Order.WITHDRAWAL;
 public class AccountImpl implements Account {
     protected Event event;
     private final UUID uuid;
-    protected final static LocalDateTime LOCAL_DATE_TIME = LocalDateTime.now();
+    protected LocalDateTime localDateTime;
+    private Map<UUID, List<History>> eventsHistory;
 
     public AccountImpl(UUID uuidUser) {
         event = new Event();
@@ -22,18 +23,20 @@ public class AccountImpl implements Account {
 
     @Override
     public void deposit(int amount) {
-        event.publish(this.uuid, DEPOSIT, amount, LOCAL_DATE_TIME);
+        localDateTime = LocalDateTime.now();
+         eventsHistory = event.publish(eventsHistory, this.uuid, DEPOSIT, amount, localDateTime);
     }
 
     @Override
     public void withdrawal(int amount) {
-        event.publish(this.uuid, WITHDRAWAL, amount, LOCAL_DATE_TIME);
+        localDateTime = LocalDateTime.now();
+        eventsHistory = event.publish(eventsHistory, this.uuid, WITHDRAWAL, amount, localDateTime);
     }
 
     @Override
     public void printStatement() {
         Map<UUID, List<History>> eventsList = event.retrieveEvents();
-        eventsList.forEach((uuid, event)-> System.out.println(uuid +" -> "+event.toString()));
+        eventsList.forEach((uuid, event)-> System.out.println(event.toString()));
     }
 
 }
